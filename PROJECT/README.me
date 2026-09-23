@@ -1,1 +1,436 @@
  Linux Inter‑Process Communication Using Pipes and FIFO
+⏰ Linux Alarm Clock System
+
+A Linux-based Alarm Clock System implemented in C that demonstrates core Operating Systems concepts such as process creation, signals, inter-process communication, concurrency, synchronization, memory management, and file I/O.
+
+The system allows users to create, manage, monitor, cancel, snooze, and schedule multiple alarms while the operating system continues handling other activities concurrently.
+
+📌 Project Overview
+
+The Linux Alarm Clock System is designed to demonstrate how an operating system manages processes, timers, signals, inter-process communication, memory, files, and concurrent activities.
+
+Instead of simply waiting in a loop until an alarm time is reached, the system creates separate alarm processes and uses Linux mechanisms such as fork(), alarm(), SIGALRM, pipes, FIFOs, POSIX threads, mutexes, condition variables, and semaphores.
+
+The project also provides persistent alarm storage, recurring alarms, alarm analytics, missed-alarm detection, daily scheduling, and sound notifications.
+
+✨ Features
+
+⏰ Alarm Management
+Set an alarm using a delay in seconds
+Set an alarm for a specific time
+Support for multiple alarms
+View all alarms
+View detailed alarm information
+Modify alarms
+Cancel active alarms
+Snooze alarms
+
+🔁 Recurring Alarms
+One-time alarms
+Daily alarms
+Weekday alarms
+Weekend alarms
+Automatically schedule the next occurrence
+
+💾 Persistent Storage
+Saves active alarms to alarms.dat
+Restores alarms when the program starts
+Maintains alarm history in alarm_history.txt
+
+🔊 Alarm Notification
+Terminal alarm notification
+Real alarm sound using Linux audio utilities
+Sound support through paplay/aplay
+
+📊 Analytics
+Total alarms created
+Total alarms triggered
+Completed alarms
+Cancelled alarms
+Snoozed alarms
+Missed alarms
+Recurring alarms
+Currently active alarms
+Trigger rate
+
+🚫 Missed Alarm Detection
+Detects alarms that pass without being triggered
+Marks them as MISSED
+Handles missed alarms after restarting the application
+
+📅 Daily Schedule
+Displays today's scheduled alarms
+Shows alarm time, ID, label, and repeat type
+
+🖥️ Process Monitoring
+Displays PID
+Displays PPID
+Displays PGID
+Shows alarm child processes
+Demonstrates parent-child process relationships
+
+🕐 Live Clock
+Displays the current system time
+Continuously updates the clock
+Alarm monitoring continues in the background
+
+🧠 Operating System Concepts Demonstrated
+
+CO-1: Operating System as a Service Layer
+
+The application interacts with Linux through system calls and OS services.
+
+Examples:
+
+getpid()
+getppid()
+getuid()
+getgid()
+sysconf()
+open()
+write()
+close()
+
+
+CO-2: Processes and Process Control
+
+Each alarm can be handled by a separate child process.
+
+Important system calls and concepts:
+
+fork()
+waitpid()
+kill()
+setpgid()
+Parent and child processes
+Process IDs
+Process groups
+Process termination
+
+Process flow:
+
+Parent Process
+      |
+    fork()
+      |
+      +--------------------+
+      |                    |
+ Parent Process       Child Alarm Process
+                           |
+                        alarm()
+                           |
+                        pause()
+                           |
+                       SIGALRM
+                           |
+                    Alarm Notification
+
+
+CO-3: Inter-Process Communication
+
+The project demonstrates multiple IPC mechanisms:
+
+Anonymous Pipe
+
+Used for communication between alarm child processes and the monitoring thread.
+
+pipe(event_pipe);
+Named FIFO
+mkfifo("alarm_control_fifo", 0666);
+
+Used for sending control commands such as:
+
+CANCEL <alarm_id>
+Signals
+
+The project uses:
+
+SIGALRM
+SIGTERM
+
+SIGALRM is used to notify an alarm process when its scheduled time is reached.
+
+
+CO-4: Memory Management
+
+Dynamic memory is used to store alarms.
+
+Functions include:
+
+malloc()
+realloc()
+free()
+
+The alarm list dynamically grows as more alarms are created.
+
+The project also demonstrates the relationship between process creation and virtual memory through fork() and copy-on-write.
+
+
+CO-5: File Systems and File I/O
+
+The system uses Linux file operations for persistent storage and logging.
+
+Important functions:
+
+open()
+write()
+close()
+
+Files used:
+
+alarms.dat
+alarm_history.txt
+
+alarms.dat stores alarm information, while alarm_history.txt records important alarm events.
+
+
+CO-6: Concurrency and Synchronization
+
+The project uses POSIX threads and synchronization mechanisms.
+
+Implemented concepts:
+
+POSIX threads
+Mutex
+Condition variable
+Semaphore
+Concurrent alarm monitoring
+Synchronization of shared alarm data
+
+Important functions:
+
+pthread_create()
+pthread_mutex_lock()
+pthread_mutex_unlock()
+pthread_cond_wait()
+pthread_cond_signal()
+sem_wait()
+sem_post()
+
+A separate monitoring thread continuously checks alarm events while the main program remains available for user interaction.
+
+
+🏗️ System Architecture
+                  Linux Alarm Clock System
+                           |
+             +-------------+-------------+
+             |             |             |
+        Alarm Manager   Monitoring    User Interface
+             |             Thread          |
+             |               |             |
+           fork()       Pipe / FIFO    Menu System
+             |               |
+       Child Process     Event Handling
+             |
+          alarm()
+             |
+          pause()
+             |
+         SIGALRM
+             |
+       Alarm Trigger
+             |
+       +-----+------+
+       |            |
+     Sound       Logging
+       |            |
+    paplay       alarm_history.txt
+                    |
+              Persistent Storage
+                    |
+                alarms.dat
+
+
+🛠️ Technologies Used
+Technology	                    Purpose
+C	                          Core implementation
+Linux/Ubuntu	              Operating system environment
+GCC	                          C compiler
+POSIX APIs	                    OS-level programming
+pthread	                    Multithreading
+Signals	                    Alarm notification
+Pipes	                          IPC
+FIFO	                          Named IPC
+Semaphores	                    Synchronization
+Mutex	                          Shared-data protection
+File I/O	                    Persistent storage
+Git/GitHub	                    Version control and project hosting
+
+
+📂 Project Structure
+
+alarm-clock/
+│
+├── alarmclock.c
+├── README.md
+├── alarms.dat
+├── alarm_history.txt
+└── alarm_control_fifo
+
+alarms.dat, alarm_history.txt, and alarm_control_fifo are generated/used by the application during execution.
+
+⚙️ Requirements
+Linux/Ubuntu
+GCC compiler
+POSIX-compatible environment
+pthread support
+Linux terminal
+
+For Windows users, the project can be executed using WSL (Windows Subsystem for Linux).
+
+🚀 Installation and Execution
+1. Clone the repository
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
+2. Enter the project directory
+cd YOUR-REPOSITORY
+3. Compile the program
+gcc -Wall -Wextra -pthread alarmclock.c -o alarmclock
+4. Run the program
+./alarmclock
+
+
+🔊 Sound Setup
+
+For real alarm sound support, install Linux audio utilities:
+
+sudo apt update
+sudo apt install pulseaudio-utils alsa-utils
+
+Check whether paplay is available:
+
+which paplay
+
+You can also check the default sound file:
+
+ls /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga
+
+🎮 Main Menu
+
+The application provides the following options:
+
+1. Set Alarm by Delay
+2. Set Alarm for Specific Time
+3. View All Alarms
+4. View Alarm Details
+5. Cancel Alarm
+6. Modify Alarm
+7. Snooze Alarm
+8. Alarm Analytics
+9. Process Information
+10. System Information
+11. Current Time
+12. Live Clock
+13. Today's Daily Schedule
+14. Exit
+
+🧪 Example
+Create an alarm
+Enter your choice: 1
+
+Enter delay in seconds: 10
+Enter alarm label: Study Break
+Enter sound name [default]: default
+
+The system creates a child process to handle the alarm.
+
+After the specified delay:
+
+============================================================
+                    ALARM RINGING!
+============================================================
+
+Alarm ID       : 1
+Label          : Study Break
+Scheduled Time : 07:30:10 PM
+Current Time   : 07:30:10 PM
+
+Playing alarm sound...
+
+
+📊 Example Analytics
+==================== ALARM ANALYTICS ======================
+
+Total Alarms Created     : 5
+Total Alarms Triggered   : 3
+Total Alarms Cancelled   : 1
+Total Alarms Completed   : 3
+Total Alarms Snoozed     : 1
+Total Alarms Missed      : 0
+
+Currently Active         : 1
+Recurring Alarms         : 1
+
+Trigger Rate             : 60.00%
+
+
+🔄 Alarm Workflow
+User
+ |
+ | Set Alarm
+ v
+Alarm Manager
+ |
+ | fork()
+ v
+Child Alarm Process
+ |
+ | alarm()
+ v
+pause()
+ |
+ | Wait
+ v
+SIGALRM
+ |
+ v
+Signal Handler
+ |
+ v
+Anonymous Pipe
+ |
+ v
+Monitoring Thread
+ |
+ +-------> Sound Notification
+ |
+ +-------> Alarm History
+ |
+ +-------> Persistent Storage
+ |
+ +-------> Recurring Alarm
+
+
+🎯 Project Objectives
+Implement an alarm system using Linux OS mechanisms
+Demonstrate process creation and process control
+Implement signal-based alarm notifications
+Demonstrate inter-process communication
+Apply POSIX threads and synchronization
+Implement dynamic memory management
+Implement Linux file I/O and persistent storage
+Support multiple and recurring alarms
+Detect missed alarms
+Provide alarm analytics and scheduling
+Demonstrate practical Operating Systems concepts
+
+🔮 Future Enhancements
+Graphical User Interface
+Custom alarm sounds
+User accounts
+Network-based alarm synchronization
+Mobile notification support
+Calendar integration
+Database-backed alarm storage
+Advanced analytics dashboard
+
+👩‍💻 Project
+
+Project: Linux Alarm Clock System
+Domain: Operating Systems
+Language: C
+Platform: Linux / Ubuntu
+Course: Operating Systems
+
+📜 License
+
+This project is developed for educational and academic purposes.
